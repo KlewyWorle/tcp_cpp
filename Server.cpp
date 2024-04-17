@@ -23,21 +23,27 @@ private:
     int port;
     sockaddr_in adr{};
     int server;
-    std::vector<std::string> messages;
+    
 public:
     Server(int port, std::string)
     {
         this->port = port;
     }
+    ~Server()
+    {
+        printf("Destructor\n");
+        close(server);
+    }
     void init()
     {
-        server = socket(AF_INET, SOCK_STREAM, 0);
+        server = socket(AF_INET, SOCK_STREAM, 0); //Creating a socket
         if (server == -1)
         {
             perror("Error socket");
             exit(EXIT_FAILURE);
         }
         
+        //Setting app sockaddr
         adr.sin_port = htons(port);
         adr.sin_family = AF_INET;
 
@@ -65,10 +71,19 @@ public:
         {
             
             file >> ss.rdbuf();
-            int32_t size = htonl(ss.str().size());
+            int32_t size = htonl(ss.str().size()); //Converting value so it will be "cross-platform"
+
+            /*
+                htonl - to 
+                ntohl - from
+            */
+
             std::cout << ntohl(size) << std::endl;
             //std::cout << size << std::endl;
-            write(fd, &size, sizeof(size));
+            write(fd, &size, sizeof(size)); //Writing data to client
+            /*
+                TODO: Use send/recv instead of write/read===============================================
+            */
             write(fd, ss.str().c_str(), ss.str().size());
 
             file.close();
@@ -76,12 +91,12 @@ public:
     }
     void listen()
     {
-        while(true)
+        while(true) //infinite loop for infinite listening to server
         {
             //printf("new\n");
             socklen_t adrlen = sizeof(adr);
 
-            int client_fd = accept(server, (sockaddr*)&adr, &adrlen);
+            int client_fd = accept(server, (sockaddr*)&adr, &adrlen); //Connecting server to client
             
             if (client_fd == -1)
             {
@@ -89,9 +104,9 @@ public:
                 exit(EXIT_FAILURE);
             }
             //printf("accepted");
-            char buf[1024];
+            //char buf[1024];
 
-            send_file(client_fd);
+            send_file(client_fd); 
 
 
             //std::cout << buf << std::endl;
@@ -106,7 +121,7 @@ public:
 
 int main()
 {
-    Server serv(1469, "none");
+    Server serv(1461, "none");
     serv.init();
     serv.listen();
 
