@@ -67,18 +67,12 @@ public:
             exit(EXIT_FAILURE);
         }
         
-
         int32_t SIZE_BUFFER = getFileSize(server); 
         std::cout << SIZE_BUFFER << std::endl;
-
         char buf[SIZE_BUFFER];
-
         getFileContents(server, buf, SIZE_BUFFER); //Getting file contents into buf
-
-        
         buf[SIZE_BUFFER] = '\0'; // Null terminating this motherfucker so it won't break stuff
-        //std::cout << buf << std::endl;
-        
+
         std::ofstream file;
         file.open("fuck2.txt"); //Writing data that we got into a file (TODO: Move to a separate function)
         if(file.is_open())
@@ -87,15 +81,9 @@ public:
             file.flush();
             file.close();
         }
-        
-        
         close(server); //Closing the socket
     }
-
 };
-
-
-
 int main(int argc, char *argv[])
 {
 

@@ -57,10 +57,6 @@ public:
             perror("Listen error");
             exit(EXIT_FAILURE);
         }
-
-        
-        
-
     }
     void send_file(int fd)
     {
@@ -69,7 +65,6 @@ public:
         file.open("fuck.txt");
         if(file.is_open())
         {
-            
             file >> ss.rdbuf();
             int32_t size = htonl(ss.str().size()); //Converting value so it will be "cross-platform"
 
@@ -77,7 +72,6 @@ public:
                 htonl - to 
                 ntohl - from
             */
-
             std::cout << ntohl(size) << std::endl;
             //std::cout << size << std::endl;
             write(fd, &size, sizeof(size)); //Writing data to client
@@ -85,7 +79,6 @@ public:
                 TODO: Use send/recv instead of write/read===============================================
             */
             write(fd, ss.str().c_str(), ss.str().size());
-
             file.close();
         }
     }
@@ -95,35 +88,23 @@ public:
         {
             //printf("new\n");
             socklen_t adrlen = sizeof(adr);
-
             int client_fd = accept(server, (sockaddr*)&adr, &adrlen); //Connecting server to client
-            
             if (client_fd == -1)
             {
                 perror("Accept error");
                 exit(EXIT_FAILURE);
             }
-            //printf("accepted");
-            //char buf[1024];
 
             send_file(client_fd); 
 
 
-            //std::cout << buf << std::endl;
-
             close(client_fd);
         }
     }
-
 };
-
-
-
 int main()
 {
     Server serv(1461, "none");
     serv.init();
     serv.listen();
-
-
 }
