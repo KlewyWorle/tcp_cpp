@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include<iostream>
@@ -28,7 +29,18 @@ public:
     {
         this->port = port;
     }
-    
+    int32_t getFileSize(int server)
+    {
+        int32_t SIZE_BUFFER;
+        read(server, &SIZE_BUFFER, sizeof(SIZE_BUFFER));
+
+        return htonl(SIZE_BUFFER);
+    }
+    void getFileContents(int server, char *buf, int32_t SIZE_BUFFER)
+    {
+        
+        size_t nread = read(server, buf, SIZE_BUFFER);
+    }
     void connect()
     {
         server = socket(AF_INET, SOCK_STREAM, 0);
@@ -51,10 +63,19 @@ public:
         int con = ::connect(server, (struct sockaddr*)&adr, sizeof(adr));
         
         //write(server, msg.c_str(), msg.size());
-        char buf[1024];
-        size_t nread = read(server, buf, 1024);
+        //write(fd, &size, sizeof(size));
+        
 
-        std::cout << buf << std::endl;
+        int32_t SIZE_BUFFER = getFileSize(server);
+        std::cout << SIZE_BUFFER << std::endl;
+
+        char buf[SIZE_BUFFER];
+
+        getFileContents(server, buf, SIZE_BUFFER);
+
+        
+        buf[SIZE_BUFFER] = '\0';
+        //std::cout << buf << std::endl;
         
         std::ofstream file;
         file.open("fuck2.txt");
@@ -76,7 +97,7 @@ public:
 int main(int argc, char *argv[])
 {
 
-    Client client(1488, "none");
+    Client client(1469, "none");
     client.connect();
 
 }

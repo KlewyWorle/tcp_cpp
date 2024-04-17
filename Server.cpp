@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -14,6 +15,8 @@
 #include<ranges>
 #include<sstream>
 #include<fstream>
+
+
 class Server
 {
 private:
@@ -60,8 +63,12 @@ public:
         file.open("fuck.txt");
         if(file.is_open())
         {
+            
             file >> ss.rdbuf();
-
+            int32_t size = htonl(ss.str().size());
+            std::cout << ntohl(size) << std::endl;
+            //std::cout << size << std::endl;
+            write(fd, &size, sizeof(size));
             write(fd, ss.str().c_str(), ss.str().size());
 
             file.close();
@@ -89,9 +96,6 @@ public:
 
             //std::cout << buf << std::endl;
 
-            
-            
-
             close(client_fd);
         }
     }
@@ -102,7 +106,7 @@ public:
 
 int main()
 {
-    Server serv(1488, "none");
+    Server serv(1469, "none");
     serv.init();
     serv.listen();
 
