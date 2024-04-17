@@ -38,7 +38,6 @@ public:
     }
     void getFileContents(int server, char *buf, int32_t SIZE_BUFFER)
     {
-        
         size_t nread = read(server, buf, SIZE_BUFFER);
     }
     void connect()
@@ -61,7 +60,11 @@ public:
         }
 
         int con = ::connect(server, (struct sockaddr*)&adr, sizeof(adr));
-        
+        if(con == -1)
+        {
+            perror("Connection errro");
+            exit(EXIT_FAILURE);
+        }
         //write(server, msg.c_str(), msg.size());
         //write(fd, &size, sizeof(size));
         
